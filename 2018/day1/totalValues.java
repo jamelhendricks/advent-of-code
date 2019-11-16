@@ -1,27 +1,52 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.HashMap;
+
 
 public class totalValues {
 
-	private static int sumFrequenciesFromFile(String path){
+	private static HashMap<Integer, Boolean> seen = new HashMap<Integer, Boolean>();
+
+	private static boolean checkMatch(int frequency){
+
+		if (seen.containsKey(frequency)){
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	private static int findMatchingFrequency(String path){
 		int freq = 0;
+		boolean foundMatch = false;
 
-		try {
-			File input = new File(path);
-			Scanner readfile = new Scanner(input);
+		// creates new scanners when reached end of input file
+		while (!foundMatch){
 
-			readfile.useDelimiter("\n");
+			try {
+				File input = new File(path);
+				Scanner readfile = new Scanner(input);
 
-			while(readfile.hasNext()){
-				String nextFreq = readfile.next();
-				freq = freq + Integer.valueOf(nextFreq);
+				readfile.useDelimiter("\n");
+
+				while(readfile.hasNext()){
+					String nextFreq = readfile.next();
+					freq = freq + Integer.valueOf(nextFreq);
+					
+					if(checkMatch(freq)){
+						System.out.println("First match was " + freq);
+						return freq;
+					} 
+
+					seen.put(freq, true);
+				}
+
+			} catch(FileNotFoundException e) {
+				System.out.printf("%s not found!\n", path);
+				System.exit(1);
 			}
-
-
-		} catch(FileNotFoundException e) {
-			System.out.printf("%s not found!\n", path);
-			System.exit(1);
 		}
 
 		return freq;
@@ -30,7 +55,7 @@ public class totalValues {
 
 	public static void main(String[] args) {
 
-		System.out.printf("Total Frequencies: %d\n", sumFrequenciesFromFile("input.txt"));
+		findMatchingFrequency("input.txt");
 		
 	}
 }
