@@ -10,6 +10,7 @@ public class checkBoxID {
 	private static int twoLetterIDs =0;
 	private static int threeLetterIDs =0;
 	private static ArrayList<String> oneOffStrings = new ArrayList<String>();
+	private ArrayList<String> idList = new ArrayList<String>();
 
 
 	public static void checkMatches(String input){
@@ -59,6 +60,7 @@ public class checkBoxID {
 		}
 	}
 
+	/*
 	public static void findCorrectIDs(String path){
 
 		try{
@@ -68,7 +70,7 @@ public class checkBoxID {
 			readfile.useDelimiter("\n");
 
 
-			// input file is has lines, thus 250 IDs
+			// input file has lines, thus 250 IDs
 			// do this for every line
 			for (int i = 0; i < 250; i++){
 				String line = readfile.next();
@@ -123,15 +125,85 @@ public class checkBoxID {
 			System.out.printf("%s not found!", path);
 		}
 	}
+	*/
+
+	public static ArrayList<String> populateList(String filepath){
+		
+		ArrayList<String> boxIDs = new ArrayList<String>();
+
+		try {
+
+			File infile = new File(filepath);
+			Scanner readfile = new Scanner(infile);
+			readfile.useDelimiter("\n");
+
+			while( readfile.hasNext() ){
+				boxIDs.add(readfile.next());
+			}
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
+		// error
+		return boxIDs;
+	}
+
+	public static ArrayList<String> findOneOffPair(ArrayList<String> catalog){
+
+		ArrayList<String> oneOffPair = new ArrayList<String>();
+		/* 
+
+		ASSUMPTION: There is only one pair of one off strings!!
+		
+		*/
+
+		// for each element
+		for(int i = 0; i < catalog.size(); i++){
+
+			String sourceID = catalog.get(i);
+
+
+			// compare to the remaining IDs
+			for(int h = i+1; h < catalog.size(); h++){
+
+				String compID = catalog.get(h);
+				int differenceCount = 0;
+
+				// iterate through the two IDs
+				for (int j = 0; j < sourceID.length(); j++){
+
+					if (differenceCount > 1){
+						break;
+					}
+
+					if (sourceID.charAt(j) != compID.charAt(j)){
+						differenceCount++;
+					}
+
+				}
+
+				if (differenceCount == 1){
+					oneOffPair.add(sourceID);
+					oneOffPair.add(compID);
+					return oneOffPair;
+				}
+
+			}
+
+
+
+		}
+
+		return oneOffPair;
+
+	}
 
 
 	public static void main(String[] args) {
-		checkSumIDs("input.txt");
-		findCorrectIDs("input.txt");
 
-		for (String id : oneOffStrings){
-			System.out.println(id);
-		}
+
+		System.out.println(findOneOffPair(populateList("input.txt")));
 	}
 
 }
